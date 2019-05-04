@@ -7,7 +7,7 @@ package vavi.games.tetris;
 
 /**
  * Tetris.
- * 
+ *
  * @author ‘å’J —z–¾
  */
 public class Tetris {
@@ -117,17 +117,17 @@ public class Tetris {
             keyRset();
             showTitle(0);
             view.repaint();
-    
+
 //System.err.println("kfs: " + kfs);
             while (rotationKey == 0) {
                 Thread.yield();
             }
-    
+
             showTitle(1);
             view.repaint();
             init();
             keyRset();
-    
+
             while (loopFlag) {
                 if (gover != 0) {
                     doGameOver();
@@ -137,14 +137,14 @@ public class Tetris {
                     if (nextPattern == -1) {
                         setNext();
                     }
-    
+
                     if (pattern == -1) {
                         setPattern();
                     } else if (gover == 0) {
                         doGame();
                     }
                 }
-    
+
                 if (patternFlag != 0) {
                     view.repaint();
                     patternFlag = 0;
@@ -864,7 +864,7 @@ public class Tetris {
                     ya[i] = yb[i];
                 }
 
-//    		    if (gover != 0) {
+//                if (gover != 0) {
 //                  tetrismap[yyy + yb[i]][xxx + xb[i]] = pattern + 1;
 //              }
             }
