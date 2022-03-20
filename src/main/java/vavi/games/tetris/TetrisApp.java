@@ -99,9 +99,9 @@ System.err.println("k: " + keyCode);
                 case KeyEvent.VK_DOWN:
                     game.keyDown();
                     break;
-                case 461:               // Å†
+                case 461:               // ‚ñ°
                 case 27:
-                    game.keyDown(); // TODO Ç¨ÇËÇ¨ÇËóéÇø
+                    game.keyDown(); // TODO „Åé„Çä„Åé„ÇäËêΩ„Å°
                     game.keyDown();
                     game.keyDown();
                     game.keyDown();

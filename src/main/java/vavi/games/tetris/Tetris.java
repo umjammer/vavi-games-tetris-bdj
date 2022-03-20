@@ -8,7 +8,7 @@ package vavi.games.tetris;
 /**
  * Tetris.
  *
- * @author ‘å’J —z–¾
+ * @author å¤§è°· é™½æ˜Ž
  */
 public class Tetris {
 
