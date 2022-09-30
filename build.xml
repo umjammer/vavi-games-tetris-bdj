@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="Windows-31J"?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <!-- ////////////////////////////////////////////////////////////////////// -->
 <!-- Copyright (c) 2008 by Naohide Sano, All rights reserved.               -->
@@ -19,16 +19,16 @@
 
   <property name="dir.build" value="build"/>
   <property name="app.name" value="00000"/>
-  <property name="jar.name" value="${app.name}.jar"/>
+  <property name="dir.dist" value="AVCHD"/>
+  <property name="jar.name" value="${dir.dist}/BDMV/JAR/${app.name}.jar"/>
+  <property name="bdjo.name" value="${dir.dist}/BDMV/BDJO/${app.name}.bdjo"/>
+  <property name="bdmv_index.name" value="${dir.dist}/BDMV/index.bdmv"/>
+  <property name="bdmv_id.name" value="${dir.dist}/CERTIFICATE/id.bdmv"/>
 
   <!-- classpath -->
   <path id="project.class.path">
     <fileset dir="${dir.bdj}/common">
-      <include name="*.jar" />
-      <include name="jmf/jmf.jar" />
-      <exclude name="javassist.jar" />
-      <exclude name="metouia.jar" />
-      <exclude name="nanoxml-2.2.3.jar" />
+      <include name="bdj.jar" />
     </fileset>
   </path>
 
@@ -39,10 +39,9 @@
   </path>
 
   <!-- clean -->
-    <delete file="${jar.name}" failonerror="false" />
-    <delete dir="META-INF" failonerror="false" />
   <target name="clean" description="clear build env">
     <delete dir="${dir.build}" failonerror="false" />
+    <delete dir="${dir.dist}" failonerror="false" />
   </target>
 
   <!-- prepare -->
@@ -67,17 +66,14 @@
   <!-- jar -->
   <target name="packaging" depends="compile" description="packaging">
 
-    <copy file="etc/bluray.MyXlet.perm" toFile="${dir.build}/${paem.file}" /> 
+    <copy file="etc/bluray.MyXlet.perm" toFile="${dir.build}/vavi/games/tetris/bluray.MyXlet.perm" /> 
 
     <copy toDir="${dir.build}">
       <fileset dir="src/main/resources" />
     </copy>
 
     <jar jarfile="${jar.name}">
-      <fileset dir="${dir.build}">
-        <exclude name="config" />
-        <exclude name="config/**/*" />
-      </fileset>
+      <fileset dir="${dir.build}" />
     </jar>
 
   </target>
@@ -85,11 +81,12 @@
   <!-- sign -->
   <target name="sign" depends="packaging" description="sign">
     <java classname="net.java.bd.tools.security.BDSigner" fork="yes">
-      <jvmarg value="-Dfile.encoding=${encoding}" />
+      <jvmarg value="-Dfile.encoding=UTF-8" />
       <classpath refid="sign.class.path" />
       <arg line="-keystore ${dir.sign}/sig.ks" />
       <arg value="${jar.name}" />
     </java>
+    <delete dir="META-INF" failonerror="false" />
   </target>
 
   <path id="audio.class.path">
@@ -104,25 +101,30 @@
 
   <!-- dist -->
   <target name="dist" depends="sign" description="distribution">
-    <java jar="${dir.bdj}/common/hdcookbook/bdjo.jar" fork="yes">
+    <mkdir dir="${dir.dist}/BDMV/BDJO" />
+    <java jar="${dir.bdj}/hdcookbook/bdjo.jar" fork="yes">
       <arg value="etc/bdjo.xml" />
-      <arg value="00000.bdjo" />
+      <arg value="${bdjo.name}" />
+    </java>
+    <java jar="${dir.bdj}/hdcookbook/index.jar" fork="yes">
+      <arg value="etc/bdmv_index.xml" />
+      <arg value="${bdmv_index.name}" />
+    </java>
+    <mkdir dir="${dir.dist}/CERTIFICATE" />
+    <java jar="${dir.bdj}/hdcookbook/id.jar" fork="yes">
+      <arg value="etc/bdmv_id.xml" />
+      <arg value="${bdmv_id.name}" />
     </java>
   </target>
 
   <!-- run -->
   <target name="run" depends="" description="test">
-    <copy todir="${dir.build}">
-      <fileset dir="etc" >
-        <include name="config/**/*" />
-      </fileset>
-    </copy>
-
-    <java jar="${dir.bdj}/common/xletview.jar" fork="yes">
-      <jvmarg value="-Djava.ext.dirs=${dir.bdj}/common"/>
+    <java classname="net.beiker.xletview.Main" fork="yes">
+      <jvmarg value="-Djava.util.logging.config.file=../xletview/src/test/resources/logging.properties"/>
       <classpath>
-        <pathelement location="${dir.build}" />
-        <path refid="project.class.path" />
+        <pathelement location="${dir.runtime}" />
+        <pathelement location="${dir.xletview}/target/xletvew-0.3.6v-SNAPSHOT-jar-with-dependencies.jar" />
+        <pathelement location="/Users/nsano/src/vavi/vavi-commons/target/vavi-commons-1.1.6-SNAPSHOT.jar" />
       </classpath>
       <arg line="-xletPath ${dir.build}" />
       <arg line="-xletClass vavi.games.tetris.TetrisApp" />
